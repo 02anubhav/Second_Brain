@@ -1,10 +1,12 @@
 import express from "express";
 import jwt from "jsonwebtoken";
-import { userModel } from "./db.js";
+import { contentModel, userModel } from "./db.js";
 import bcrypt from "bcrypt";
 import { JWT_TOKEN_SECRET } from "./config.js";
+import { userMiddleware } from "./middleware.js";
 const app = express();
 app.use(express.json());
+//---------- User Registration Endpoint -------------//
 app.post("/api/v1/signup", async (req, res) => {
     const { username, password } = req.body;
     const existingUser = await userModel.findOne({
@@ -21,6 +23,7 @@ app.post("/api/v1/signup", async (req, res) => {
     });
     res.status(201).send({ message: "User created successfully" });
 });
+//----------- Signin Endpoint -------------//
 app.post("/api/v1/signin", async (req, res) => {
     const { username, password } = req.body;
     const existingUser = await userModel.findOne({
@@ -36,7 +39,16 @@ app.post("/api/v1/signin", async (req, res) => {
     const token = jwt.sign({ userId: existingUser._id }, JWT_TOKEN_SECRET);
     res.status(200).send({ message: "user logged in successfully", token });
 });
-app.post("/api/v1/content", (req, res) => { });
+app.post("/api/v1/content", userMiddleware, async (req, res) => {
+    const { title, link } = req.body;
+    await contentModel.create({
+        title,
+        link,
+        userId: req.userId,
+        tags: [],
+    });
+    res.json({ message: "Content created successfully" });
+});
 app.get("/api/v1/content", (req, res) => { });
 app.post("/api/v1/brain/share", (req, res) => { });
 app.post("/api/v1/brain/:shareLink", (req, res) => { });
