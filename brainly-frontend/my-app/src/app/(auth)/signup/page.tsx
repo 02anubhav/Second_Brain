@@ -1,4 +1,4 @@
-import { checkUser } from "@/app/actions";
+import { createUser } from "@/app/actions";
 import Button from "@/app/components/ui/button";
 import Input from "@/app/components/ui/input";
 import Container from "@/common/container";
@@ -6,7 +6,7 @@ import LogoIcon from "@/icons/logo-icon";
 
 export default async function Signup() {
   return (
-    <form action={checkUser}>
+    <form action={createUser}>
       <Container className="flex justify-center items-center h-screen">
         <div className="flex flex-col gap-4  max-w-md mx-auto mt-20 backdrop-blur-md bg-white/30 p-8 rounded-lg shadow-lg ">
           <div className="flex flex-col items-center justify-center">
@@ -14,7 +14,7 @@ export default async function Signup() {
               <LogoIcon className="size-10" />
             </div>
             <h1 className="text-2xl font-bold font-manrope mb-2 text-center">
-              Sign In
+              Sign Up
             </h1>
             <p className="text-gray-500 text-center mb-4">
               Welcome back! Please sign in to your account.
@@ -28,7 +28,7 @@ export default async function Signup() {
             <h1 className="text-gray-500 mb-2">password</h1>
             <Input name="password" placeholder="password" type="password" />
           </div>
-          <Button type="submit" className="mt-4" variant="primary" size="lg" text="Sign In" />
+          <Button type="submit" className="mt-4" variant="primary" size="lg" text="Sign Up" />
         </div>
       </Container>
     </form>

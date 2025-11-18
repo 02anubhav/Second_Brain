@@ -5,6 +5,7 @@ interface ButtonProps {
   icon?: React.ReactNode;
   className?: string;
   onClick?: () => void;
+  type?: "button" | "submit" | "reset";
 }
 
 const variant = {
