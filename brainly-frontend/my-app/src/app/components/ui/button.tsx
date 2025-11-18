@@ -3,13 +3,14 @@ interface ButtonProps {
   size: "sm" | "md" | "lg";
   text: String;
   icon?: React.ReactNode;
+  className?: string;
   onClick?: () => void;
 }
 
 const variant = {
-  base: "rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 cursor-pointer tansition-colors duration-200 inline-flex items-center gap-2",
+  base: "rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 cursor-pointer tansition-colors duration-200 inline-flex items-center gap-2 justify-center font-inter",
   primary:
-    "bg-gradient-to-b from-indigo-500 to-indigo-700 text-white hover:scale-90 ring-indigo-500",
+    "bg-gradient-to-b from-indigo-500 to-indigo-700 text-white hover:scale-95 transition-all ",
   secondary: "bg-white text-indigo-700 border border-indigo-700",
   outline: "bg-transparent text-indigo-700 border border-indigo-700",
 };
@@ -25,7 +26,7 @@ export default function Button(props: ButtonProps) {
     <button
       className={`${variant.base} ${variant[props.variant || "primary"]} ${
         size[props.size || "md"]
-      }`}
+      } ${props.className || ""}`}
       onClick={props.onClick}
     >
       {props.icon} {props.text}

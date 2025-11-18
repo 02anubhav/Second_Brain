@@ -1,6 +1,6 @@
 import { IconProps } from ".";
 
-export default function LogoIcon(props: IconProps) {
+export default function LogoIcon({props,className}: {props?:IconProps,className?:string}) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -10,7 +10,7 @@ export default function LogoIcon(props: IconProps) {
       fill="none"
       stroke="var(--color-indigo-500)"
       strokeWidth="2"
-      className={`iconSizeVariants[props.size || "md"]`}
+      className={`iconSizeVariants[props.size || "md"] ${className || ""}`}
     >
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
       <path d="M15.5 13a3.5 3.5 0 0 0 -3.5 3.5v1a3.5 3.5 0 0 0 7 0v-1.8" />

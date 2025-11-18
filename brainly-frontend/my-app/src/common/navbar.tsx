@@ -20,8 +20,8 @@ export default function Navbar() {
       <nav className="w-full flex items-center justify-between font-inter  px-4 sticky top-0 z-50">
         <div className="flex items-center gap-8 text-gray-600 ">
           <h1 className="text-gray-600 font-semibold text-2xl flex items-center gap-2 mr-8">
-            <LogoIcon />
-            Brainly
+            <LogoIcon size="lg"/>
+            Brainly 
           </h1>
           {navItems.map((item) => {
             return (

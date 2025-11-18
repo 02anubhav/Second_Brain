@@ -1,11 +1,16 @@
 import express from "express";
 import jwt from "jsonwebtoken";
 import { contentModel, userModel } from "./db.js";
+import cors from "cors";
 import bcrypt from "bcrypt";
 import { JWT_TOKEN_SECRET } from "./config.js";
 import { userMiddleware } from "./middleware.js";
 const app = express();
 app.use(express.json());
+app.use(cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+}));
 //---------- User Registration Endpoint -------------//
 app.post("/api/v1/signup", async (req, res) => {
     const { username, password } = req.body;
@@ -39,6 +44,7 @@ app.post("/api/v1/signin", async (req, res) => {
     const token = jwt.sign({ userId: existingUser._id }, JWT_TOKEN_SECRET);
     res.status(200).send({ message: "user logged in successfully", token });
 });
+//----------- Content Creation and Retrieval Endpoints -------------//
 app.post("/api/v1/content", userMiddleware, async (req, res) => {
     const { title, link } = req.body;
     await contentModel.create({
@@ -49,8 +55,20 @@ app.post("/api/v1/content", userMiddleware, async (req, res) => {
     });
     res.json({ message: "Content created successfully" });
 });
-app.get("/api/v1/content", (req, res) => { });
-app.post("/api/v1/brain/share", (req, res) => { });
+//--------- Get contents for logged in user ---------//
+app.get("/api/v1/content", userMiddleware, async (req, res) => {
+    const userId = req.userId;
+    const contents = await contentModel.find({ userId: userId });
+    res.json({ contents });
+});
+app.delete("/api/v1/content", async (req, res) => {
+    const { contentId } = req.body;
+    await contentModel.deleteOne({ contentId, userId: req.userId });
+    res.json({ message: "Content deleted successfully" });
+});
+app.post("/api/v1/brain/share", (req, res) => {
+    const { share } = req.body;
+});
 app.post("/api/v1/brain/:shareLink", (req, res) => { });
-app.listen(3000);
+app.listen(3001);
 //# sourceMappingURL=index.js.map
