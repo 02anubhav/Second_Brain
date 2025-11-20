@@ -1,10 +1,11 @@
 import express from "express";
 import jwt from "jsonwebtoken";
-import { contentModel, userModel } from "./db.js";
+import { contentModel, linkModel, userModel } from "./db.js";
 import cors from "cors";
-import bcrypt from "bcrypt";
+import bcrypt, { hash } from "bcrypt";
 import { JWT_TOKEN_SECRET } from "./config.js";
 import { userMiddleware } from "./middleware.js";
+import { generateRandomHash } from "./utils.js";
 const app = express();
 app.use(express.json());
 app.use(cors({
@@ -61,14 +62,43 @@ app.get("/api/v1/content", userMiddleware, async (req, res) => {
     const contents = await contentModel.find({ userId: userId });
     res.json({ contents });
 });
-app.delete("/api/v1/content", async (req, res) => {
+app.delete("/api/v1/content", userMiddleware, async (req, res) => {
     const { contentId } = req.body;
     await contentModel.deleteOne({ contentId, userId: req.userId });
     res.json({ message: "Content deleted successfully" });
 });
-app.post("/api/v1/brain/share", (req, res) => {
+app.post("/api/v1/brain/share", userMiddleware, async (req, res) => {
     const { share } = req.body;
+    if (share) {
+        const existingLink = await linkModel.findOne({
+            userId: req.userId,
+        });
+        if (existingLink) {
+            return res.json({ message: `/share/${existingLink.hash}` });
+        }
+        const hash = generateRandomHash(10);
+        await linkModel.create({
+            userId: req.userId,
+            hash,
+        });
+    }
+    else {
+        await linkModel.deleteOne({ userId: req.userId });
+    }
+    res.json({ message: `/share/${hash}` });
 });
-app.post("/api/v1/brain/:shareLink", (req, res) => { });
+app.post("/api/v1/brain/:shareLink", async (req, res) => {
+    const hash = req.params.shareLink;
+    const link = await linkModel.findOne({ hash });
+    if (!link) {
+        return res.status(404).json({ message: "Link not found" });
+    }
+    const contents = await contentModel.findOne({ userId: link.userId });
+    const user = await userModel.findOne({ userId: link.userId });
+    if (!user) {
+        return res.status(404).json({ message: "User not found" });
+    }
+    res.json({ username: user.username, contents });
+});
 app.listen(3001);
 //# sourceMappingURL=index.js.map
